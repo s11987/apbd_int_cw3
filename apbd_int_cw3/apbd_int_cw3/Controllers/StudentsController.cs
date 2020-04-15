@@ -11,10 +11,15 @@ namespace apbd_int_cw3.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-        [HttpGet]
-        public string getStudent()
+        [HttpGet("{id}")]
+        public ActionResult GetStudent(int id)
         {
-            return "Jan Kowalski";
+            if (id == 1)
+                return Ok("Jan Kowalski");
+            else if (id == 2)
+                return Ok("Jurand Galazka");
+            return NotFound("brak studenta");
+
         }
     }
 }
