@@ -348,3 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/apbd_int_cw3/apbd_int_cw3/Controllers/ValuesController.cs
