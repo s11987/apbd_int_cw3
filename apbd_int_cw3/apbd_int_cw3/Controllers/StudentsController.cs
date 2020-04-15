@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using apbd_int_cw3.DAL;
 using apbd_int_cw3.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace apbd_int_cw3.Controllers
@@ -12,10 +12,17 @@ namespace apbd_int_cw3.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-        [HttpGet]
-        public string GetStudent(string orderBy)
+        private readonly IDbService _dbService;
+
+        public StudentsController(IDbService dbService)
         {
-            return $"Jurandowski, Galakowski, Zygmuntowski sortowanie = {orderBy}";
+            _dbService = dbService;
+        }
+
+        [HttpGet]
+        public IActionResult GetStudents(string orderBy)
+        {
+            return Ok(_dbService.GetStudents());
         }
 
         [HttpPost]
