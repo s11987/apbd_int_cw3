@@ -29,99 +29,33 @@ namespace apbd_int_cw3.Controllers
         [HttpGet("{id}")]
         public IActionResult GetStudentsById(string id)
         {
-
+            Enrollment en = new Enrollment();
             using (var con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=APBD;Integrated Security=True"))
             using (var com = new SqlCommand())
             {
-                Student st = new Student();
+
                 com.Connection = con;
-                com.CommandText = "select * from Student where IndexNumber='"+ id + "'";
-                //com.Parameters.AddWithValue("id", id);
+                com.CommandText = @"select * from Student
+INNER JOIN Enrollment ON Student.IdEnrollment = Enrollment.IdEnrollment
+INNER JOIN Studies ON Enrollment.IdStudy = Studies.IdStudy
+where Student.IndexNumber = '" + id + "'";
+
+                
                 con.Open();
                 var dr = com.ExecuteReader();
                 while (dr.Read())
                 {
                     if (dr["IndexNumber"].ToString() == id)
                     {
-                        st.IdEnrollment = Int32.Parse(dr["IdEnrollment"].ToString());
-                        st.FirstName = dr["FirstName"].ToString();
-                        st.LastName = dr["LastName"].ToString();
-
-                        st.IndexNumber = dr["IndexNumber"].ToString();
-                        st.BirthDate = dr["BirthDate"].ToString();
+                        en.IdEnrollment = Int32.Parse(dr["IdEnrollment"].ToString());
+                        en.Semester = Int32.Parse(dr["Semester"].ToString());
+                        en.IdStudy = Int32.Parse(dr["IdStudy"].ToString());
+                        en.StartDate = dr["StartDate"].ToString();
                     }
                 }
             }
 
-
-
-
-
-            /*   List<Studies> studies = new List<Studies>();
-               using (SqlConnection con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=APBD;Integrated Security=True"))
-               {
-
-                   Student st = new Student();
-                   Enrollment en = new Enrollment();
-                   con.Open();
-                   using (SqlCommand com = new SqlCommand("SELECT * FROM Student", con))
-                   {
-                      // com.Connection = con;
-
-                       var dr = com.ExecuteReader();
-                       while (dr.Read())
-                       {
-                           if (dr["IndexNumber"].ToString() == id)
-                           {
-                               st.IdEnrollment = Int32.Parse(dr["IdEnrollment"].ToString());
-                               st.FirstName = dr["FirstName"].ToString();
-                               st.LastName = dr["LastName"].ToString();
-
-                               st.IndexNumber = dr["IndexNumber"].ToString();
-                               st.BirthDate = dr["BirthDate"].ToString();
-                           }
-                       }
-                       dr.Close();
-                       com.ExecuteNonQuery();
-                   }
-
-                   using (SqlCommand com = new SqlCommand("SELECT * FROM Enrollment", con))
-                   {
-                       com.Connection = con;
-                       var dr = com.ExecuteReader();
-                       while (dr.Read())
-                       {
-                           if (Int32.Parse(dr["IdEnrollment"].ToString()) == st.IdEnrollment)
-                           {
-                               en.IdEnrollment = Int32.Parse(dr["IdEnrollment"].ToString());
-                               en.Semester = Int32.Parse(dr["Semester"].ToString());
-                               en.IdStudy = Int32.Parse(dr["IdStudy"].ToString());
-                               en.StartDate = dr["StartDate"].ToString();
-                           }
-                       }
-                       dr.Close();
-                       com.ExecuteNonQuery();
-                   }
-                   using (SqlCommand com = new SqlCommand("SELECT * FROM Studies", con))
-                   {
-                       com.Connection = con;
-                       var dr = com.ExecuteReader();
-                       while (dr.Read())
-                       {
-                           Studies study = new Studies();
-                           if (Int32.Parse(dr["IdStudy"].ToString()) == en.IdStudy)
-                           {
-                               study.IdStudy = Int32.Parse(dr["IdStudy"].ToString());
-                               study.Name = dr["Name"].ToString();
-                               studies.Add(study);
-                           }
-
-                       }
-                   }
-
-               }  
-               */
-            return Ok(_dbService.GetStudents());
+            return Ok(en);
         }
 
 
