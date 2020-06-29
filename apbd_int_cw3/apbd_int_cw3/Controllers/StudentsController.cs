@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,21 +27,25 @@ namespace apbd_int_cw3.Controllers
             return Ok(_dbService.GetStudents());
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetStudentsById(string id)
+        [HttpGet("{_id}")]
+        public IActionResult GetStudentsById(string _id)
         {
+            string id = _id;
             Enrollment en = new Enrollment();
             using (var con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=APBD;Integrated Security=True"))
             using (var com = new SqlCommand())
             {
-
+                //con.CommandType = CommandType.StoredProcedure;
                 com.Connection = con;
+           
                 com.CommandText = @"select * from Student
 INNER JOIN Enrollment ON Student.IdEnrollment = Enrollment.IdEnrollment
 INNER JOIN Studies ON Enrollment.IdStudy = Studies.IdStudy
-where Student.IndexNumber = '" + id + "'";
+where Student.IndexNumber = @id";
+               // SqlParameter p = new SqlParameter("@id", id);
+                com.Parameters.AddWithValue("@id", id);
+                //com.Parameters["id"].Value = id;
 
-                
                 con.Open();
                 var dr = com.ExecuteReader();
                 while (dr.Read())
